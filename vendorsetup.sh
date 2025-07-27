@@ -60,10 +60,17 @@ clean_clone() {
 
 # Git clones (using clone_if_missing by default, as it's generally safer for initial setup)
 echo "Setting up repositories..."
+<<<<<<< HEAD
 clone_if_missing "https://github.com/glitch-wraith/android_device_xiaomi_sm8250-common" "15-qpr2" "device/xiaomi/sm8250-common"
 clone_if_missing "https://github.com/glitch-wraith/android_kernel_xiaomi_sm8250" "axksu" "kernel/xiaomi/sm8250"
 clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_sm8250-common" "15" "vendor/xiaomi/sm8250-common"
 clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_pipa" "15" "vendor/xiaomi/pipa"
+=======
+clone_if_missing "https://github.com/glitch-wraith/android_device_xiaomi_sm8250-common" "16.0" "device/xiaomi/sm8250-common"
+clone_if_missing "https://github.com/glitch-wraith/android_kernel_xiaomi_sm8250" "bpf-ksu" "kernel/xiaomi/sm8250"
+clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_sm8250-common" "16.0" "vendor/xiaomi/sm8250-common"
+clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_pipa" "16.0" "vendor/xiaomi/pipa"
+>>>>>>> ed84a65 (pipa: Update repos for A16)
 
 # Additional repos
 clone_if_missing "https://github.com/LineageOS/android_hardware_xiaomi" "lineage-22.2" "hardware/xiaomi"
@@ -209,10 +216,17 @@ fi
 mkdir -p "${DEVICE_PATH}/source-patches" || { echo "Error: Failed to create source-patches directory."; exit 1; }
 
 # Apply patches
+<<<<<<< HEAD
 apply_recovery_patch || { echo "Recovery patch application failed."; exit 1; }
 
 # Setup firmware
 setup_firmware || { echo "Firmware setup failed."; exit 1; }
+=======
+apply_recovery_patch || {
+    echo "Error: Recovery patch application failed."
+    exit 1
+}
+>>>>>>> ed84a65 (pipa: Update repos for A16)
 
 echo "-------------------------------------"
 echo "           Setup complete!           "
