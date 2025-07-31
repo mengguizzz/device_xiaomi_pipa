@@ -17,12 +17,6 @@ $(call inherit-product, device/xiaomi/pipa/device.mk)
 # Inherit keys
 $(call inherit-product, vendor/lineage-priv/keys/keys.mk)
 
-<<<<<<< HEAD:lineage_pipa.mk
-PRODUCT_NAME := lineage_pipa
-=======
-<<<<<<< HEAD:voltage_pipa.mk
-PRODUCT_NAME := voltage_pipa
-=======
 # Mist OS Flags
 MIST_BUILD_TYPE := OFFICIAL
 MISTOS_MAINTAINER := Mufasa
@@ -31,10 +25,7 @@ TARGET_USES_PICO_GAPPS := true
 PRODUCT_NO_CAMERA := false
 TARGET_DISABLE_EPPE := true
 
-
 PRODUCT_NAME := lineage_pipa
->>>>>>> d3fa1db (MistOS Bringup):lineage_pipa.mk
->>>>>>> d0f68ef (pip:MistOS Bringup):voltage_pipa.mk
 PRODUCT_DEVICE := pipa
 PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_BRAND := Xiaomi
@@ -44,18 +35,6 @@ PRODUCT_CHARACTERISTICS := tablet
 TARGET_SUPPORTS_QUICK_TAP := false
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
-
-# Axion specific
-AXION_CAMERA_REAR_INFO := 13
-AXION_CAMERA_FRONT_INFO := 8
-AXION_CPU_SMALL_CORES := 0,1,2,3
-AXION_CPU_BIG_CORES := 4,5,6,7
-AXION_MAINTAINER := Abdulwahab_(ai94iq)
-AXION_PROCESSOR := Qualcomm_Snapdragon_870
-TARGET_PREBUILT_BCR := false
-PRODUCT_NO_CAMERA := false
-TARGET_INCLUDE_MATLOG := true
-BYPASS_CHARGE_SUPPORTED := true
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     BuildFingerprint=Xiaomi/pipa_global/pipa:13/RKQ1.211001.001/V816.0.7.0.UMZMIXM:user/release-keys
