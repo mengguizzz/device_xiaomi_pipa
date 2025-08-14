@@ -71,6 +71,41 @@ clone_if_missing "https://github.com/glitch-wraith/android_kernel_xiaomi_sm8250"
 clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_sm8250-common" "16.0" "vendor/xiaomi/sm8250-common"
 clone_if_missing "https://github.com/glitch-wraith/proprietary_vendor_xiaomi_pipa" "16.0" "vendor/xiaomi/pipa"
 >>>>>>> ed84a65 (pipa: Update repos for A16)
+<<<<<<< HEAD
+=======
+=======
+divider
+
+if [ "$kernel_choice" == "1" ]; then
+    kernel_repo_url="https://github.com/gensis01/android_kernel_xiaomi_sm8250.git"
+    kernel_branch="magictime-new"
+elif [ "$kernel_choice" == "2" ]; then
+    kernel_repo_url="https://github.com/gensis01/android_kernel_xiaomi_sm8250"
+    kernel_branch="bpf-ksu"
+else
+    error "Invalid choice. Exiting."
+    exit 1
+fi
+
+clean_clone "$kernel_repo_url" "$kernel_branch" "kernel/xiaomi/sm8250"
+divider
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Other Repositories
+# ─────────────────────────────────────────────────────────────────────────────
+info "Setting up other repositories..."
+clone_if_missing "https://github.com/gensis01/android_device_xiaomi_sm8250-common.git" "16.0" "device/xiaomi/sm8250-common"
+clone_if_missing "https://github.com/gensis01/proprietary_vendor_xiaomi_sm8250-common.git" "16.0" "vendor/xiaomi/sm8250-common"
+clone_if_missing "https://github.com/gensis01/proprietary_vendor_xiaomi_pipa.git" "16.0" "vendor/xiaomi/pipa"
+clone_if_missing "https://github.com/LineageOS/android_hardware_xiaomi" "lineage-23.0" "hardware/xiaomi"
+clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_compat" "lineage-23.0" "hardware/lineage/compat"
+clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_interfaces" "lineage-23.0" "hardware/lineage/interfaces"
+clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_livedisplay" "lineage-23.0" "hardware/lineage/livedisplay"
+clean_clone "https://github.com/PocoF3Releases/hardware_xiaomi.git"  "aosp-16" "hardware/xiaomi"
+clean_clone  "https://github.com/PocoF3Releases/packages_resources_devicesettings.git" "aosp-16" "packages/resources/devicesettings"
+divider
+>>>>>>> 27d1bc0 (pipa:vendorsetup.sh:some changes)
+>>>>>>> 0d43aac (pipa:vendorsetup: Update repos)
 
 # Additional repos
 clone_if_missing "https://github.com/LineageOS/android_hardware_xiaomi" "lineage-22.2" "hardware/xiaomi"
