@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ──────────────────────────────────────────────────────────────
-# ?? Terminal Colors
+# Terminal Colors
 # ──────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -18,7 +18,7 @@ divider() { echo -e "${BOLD}─────────────────�
 
 # ──────────────────────────────────────────────────────────────
 # clone_if_missing + clean_clone
-# ──────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────
 clone_if_missing() {
     local repo_url=$1 branch=$2 target_dir=$3
     [ -z "$repo_url" ] || [ -z "$branch" ] || [ -z "$target_dir" ] && {
@@ -58,7 +58,7 @@ clean_clone() {
 
 # ──────────────────────────────────────────────────────────────
 # Kernel Repo (fixed to Normal Perf)
-# ──────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────
 divider
 info "Cloning kernel into kernel/xiaomi/sm8250..."
 clone_if_missing "https://github.com/gensis01/android_kernel_xiaomi_sm8250" "bpf-ksu" "kernel/xiaomi/sm8250"
@@ -66,7 +66,7 @@ divider
 
 # ──────────────────────────────────────────────────────────────
 # Other Repos
-# ──────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────
 info "Setting up other repositories..."
 clone_if_missing "https://github.com/gensis01/android_device_xiaomi_sm8250-common" "16" "device/xiaomi/sm8250-common"
 clone_if_missing "https://github.com/gensis01/vendor_xiaomi_sm8250-common" "16" "vendor/xiaomi/sm8250-common"
@@ -74,13 +74,15 @@ clone_if_missing "https://github.com/gensis01/vendor_xiaomi_pipa" "16" "vendor/x
 clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_compat" "lineage-23.0" "hardware/lineage/compat"
 clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_interfaces" "lineage-23.0" "hardware/lineage/interfaces"
 clone_if_missing "https://github.com/LineageOS/android_hardware_lineage_livedisplay" "lineage-23.0" "hardware/lineage/livedisplay"
-clean_clone "https://github.com/PocoF3Releases/hardware_xiaomi.git"  "aosp-16" "hardware/xiaomi"
+clone_if_missing "https://github.com/PocoF3Releases/device_qcom_wfd.git" "bka" "device/qcom/wfd"
+clone_if_missing "https://github.com/PocoF3Releases/vendor_qcom_wfd.git" "bka" "vendor/qcom/wfd"
+clean_clone "https://github.com/gensis01/hardware_xiaomi.git"  "aosp-16" "hardware/xiaomi"
 clean_clone "https://github.com/PocoF3Releases/packages_resources_devicesettings.git" "aosp-16" "packages/resources/devicesettings"
 divider
 
 # ──────────────────────────────────────────────────────────────
 # Apply Recovery Patch (non-fatal warning only)
-# ──────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────
 apply_recovery_patch() {
     local root_dir
     root_dir=$(pwd)
@@ -100,10 +102,8 @@ apply_recovery_patch() {
         return
     fi
     
-    # Clean DOS line endings from the patch file
     tr -d '\r' < "$patch_file" > "$temp_patch"
 
-    # Check if the patch is already applied by looking for its commit
     local patch_fingerprint
     patch_fingerprint=$(sha1sum "$temp_patch" | awk '{print $1}')
     if git log -1 --pretty=%B | grep -q "$patch_fingerprint"; then
@@ -113,7 +113,6 @@ apply_recovery_patch() {
         return
     fi
 
-    # Attempt to apply the patch. If it fails, warn the user and continue.
     if git apply --check --ignore-whitespace "$temp_patch" >/dev/null 2>&1; then
         git apply --ignore-whitespace "$temp_patch"
         git add .
@@ -123,15 +122,13 @@ apply_recovery_patch() {
         warn "White recovery patch is skipped, may cause problems in recovery."
     fi
 
-    # Cleanup and return to the original directory
     rm -f "$temp_patch"
     cd "$root_dir"
 }
 
 # ──────────────────────────────────────────────────────────────
-# Setup firmware: download, extract, move whole 'radio' folder
-# (runs after apply_recovery_patch)
-# ──────────────────────────────────────────────
+# Setup firmware
+# ──────────────────────────────────────────────────────────────
 setup_firmware() {
     local root_dir
     root_dir=$(pwd)
@@ -142,13 +139,11 @@ setup_firmware() {
 
     info "Setting up firmware..."
 
-    # Ensure target directory exists
     mkdir -p "$target_dir" || {
         error "Failed to create target directory: $target_dir"
         return 1
     }
 
-    # Remove old radio folder if present
     if [ -d "$target_dir/radio" ]; then
         warn "Removing existing radio folder..."
         rm -rf "$target_dir/radio" || {
@@ -157,7 +152,6 @@ setup_firmware() {
         }
     fi
 
-    # Download firmware zip
     if command -v curl >/dev/null 2>&1; then
         info "Downloading firmware (curl)..."
         curl -L --fail -o "$tmp_zip" "$firmware_url" || {
@@ -177,7 +171,6 @@ setup_firmware() {
         return 1
     fi
 
-    # Prepare temp extract dir
     rm -rf "$tmp_extract"
     mkdir -p "$tmp_extract" || {
         error "Failed to create temp extract dir: $tmp_extract"
@@ -185,7 +178,6 @@ setup_firmware() {
         return 1
     }
 
-    # Extract to temp dir
     if command -v unzip >/dev/null 2>&1; then
         info "Extracting firmware into temporary location..."
         unzip -q -o "$tmp_zip" -d "$tmp_extract" || {
@@ -209,7 +201,6 @@ setup_firmware() {
         return 1
     fi
 
-    # Find the radio directory inside the extracted tree
     local radio_dir
     radio_dir=$(find "$tmp_extract" -type d -name radio -print -quit)
 
@@ -220,7 +211,6 @@ setup_firmware() {
         return 1
     fi
 
-    # Move the whole radio directory into target_dir
     info "Moving radio directory into $target_dir..."
     mv "$radio_dir" "$target_dir"/ || {
         error "Failed to move radio directory to $target_dir"
@@ -229,7 +219,6 @@ setup_firmware() {
         return 1
     }
 
-    # Cleanup leftover extracted files (the moved radio dir is no longer in tmp_extract)
     rm -f "$tmp_zip"
     rm -rf "$tmp_extract"
 
@@ -237,17 +226,46 @@ setup_firmware() {
 }
 
 # ──────────────────────────────────────────────────────────────
+# Apply FWB Patch (Tablet, Local)
+# ──────────────────────────────────────────────────────────────
+apply_fwb_patch() {
+    local root_dir
+    root_dir=$(pwd)
+    local target_dir="frameworks/base"
+    local patch_file="$root_dir/device/xiaomi/pipa/patches/tablet-fwb.patch"
+
+    info "Applying Tablet FWB patch from local repo..."
+
+    if [ ! -f "$patch_file" ]; then
+        error "Patch file not found: $patch_file"
+        return 1
+    fi
+
+    if ! cd "$target_dir"; then
+        error "Could not enter $target_dir to apply patch."
+        return 1
+    fi
+
+    if git apply --check --ignore-whitespace "$patch_file" >/dev/null 2>&1; then
+        git apply --ignore-whitespace "$patch_file"
+        success "Tablet FWB patch applied successfully."
+    else
+        warn "Tablet FWB patch could not be applied (may already be applied or conflict)."
+    fi
+
+    cd "$root_dir"
+}
+
+# ──────────────────────────────────────────────────────────────
 # Run Patch Setup
-# ──────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────
 ROOT_DIR=$(pwd)
 DEVICE_PATH="${ROOT_DIR}/device/xiaomi/pipa"
 mkdir -p "$DEVICE_PATH/source-patches"
 
-# Apply patch for white screen recovery issue
 apply_recovery_patch
-
-# Download fw and place it correctly
 setup_firmware
+apply_fwb_patch
 
 echo "-------------------------------------"
 echo "           Setup complete!           "
