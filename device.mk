@@ -74,8 +74,7 @@ PRODUCT_COPY_FILES += \
 
 # Rootdir (补回 pipa 专属启动脚本)
 PRODUCT_PACKAGES += \
-    init.device.rc \
-    init.pipa.rc
+    init.device.rc
 
 PRODUCT_SHIPPING_API_LEVEL := 33
 
