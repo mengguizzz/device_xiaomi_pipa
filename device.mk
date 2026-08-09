@@ -1,6 +1,5 @@
 #
-# Copyright (C) 2021 The LineageOS Project
-#
+# Copyright (C) 2021-2024 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -18,12 +17,10 @@ PRODUCT_AAPT_PREF_CONFIG := xxxhdpi
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(LOCAL_PATH)/audio/,$(TARGET_COPY_OUT_VENDOR)/etc)
 
-# Boot animation
+# Boot animation (横屏平板专属方向配置)
 TARGET_SCREEN_HEIGHT := 2880
 TARGET_SCREEN_WIDTH := 1800
 TARGET_BOOT_ANIMATION_RES := 1080
-
-#set boot animation orientation
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.bootanim.set_orientation_logical_0=ORIENTATION_270
 
 # Camera
@@ -42,24 +39,45 @@ DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
     $(LOCAL_PATH)/overlay-lineage
 
-# Peripheral Manager
+# =========================================================
+# 平板专属外设与影音 (从完整的 Lineage 树补回)
+# =========================================================
+# 1. 磁吸键盘与智能保护壳支持
 PRODUCT_PACKAGES += \
     XiaomiPeripheralManager
 
-# Permissions
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
+# 2. 触控笔与键盘的按键映射及 IDC 配置文件
+PRODUCT_PACKAGES += \
+    Xiaomi_Smart_Pen_Keyboard.kl \
+    kona-mtp-snd-card_Button_Jack.kl \
+    Xiaomi_Keyboard.idc
 
+# 3. 杜比音效与设备专属设置 (XiaomiParts)
+PRODUCT_PACKAGES += \
+    XiaomiDolby \
+    XiaomiParts \
+    DSPVolumeSynchronizer
+
+# 4. 杜比音效 Vendor 属性激活
+PRODUCT_VENDOR_PROPERTIES += \
+    ro.vendor.dolby.dax.version=DAX3_3.6.1.6_r1 \
+    ro.vendor.audio.dolby.dax.version=DAX3_3.6 \
+    ro.vendor.audio.dolby.dax.support=true \
+    ro.vendor.audio.dolby.surround.enable=true
+# =========================================================
+
+# Permissions (平板自由窗口与画中画权限)
 PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.software.freeform_window_management.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.freeform_window_management.xml \
     frameworks/native/data/etc/android.software.picture_in_picture.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.picture_in_picture.xml
 
-# Rootdir
+# Rootdir (补回 pipa 专属启动脚本)
 PRODUCT_PACKAGES += \
-    init.device.rc
+    init.device.rc \
+    init.pipa.rc
 
-# Shipping API level
-PRODUCT_SHIPPING_API_LEVEL := 30
+PRODUCT_SHIPPING_API_LEVEL := 33
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
