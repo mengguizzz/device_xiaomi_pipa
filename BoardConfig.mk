@@ -15,20 +15,18 @@ TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 TARGET_SCREEN_DENSITY := 400
 
 # ---------------------------------------------------------
-# Kernel & Boot (修复掉 Fastboot 的核心配置)
+# Kernel & Boot
 # ---------------------------------------------------------
 BOARD_BOOT_HEADER_VERSION := 3
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 
-# 强制打包 DTB 和独立的 DTBO，防止 Bootloader 拒绝引导
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO := true
 
-TARGET_KERNEL_SOURCE := kernel/xiaomi/sm8250
-# 使用体积较小（约 20kb）的 user_config，避免编译时内存溢出导致内核损坏
-TARGET_KERNEL_CONFIG := pipa_user_config
+TARGET_KERNEL_SOURCE := kernel/xiaomi/pipa
 
-# 完整的启动参数 (CMDLINE)
+TARGET_KERNEL_CONFIG := pipa_defconfig
+
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 androidboot.usbcontroller=a600000.dwc3 swiotlb=2048 loop.max_part=7 cgroup.memory=nokmem,nosocket reboot=panic_warm
 BOARD_KERNEL_CMDLINE += androidboot.fstab_suffix=qcom
 BOARD_KERNEL_CMDLINE += androidboot.init_fatal_reboot_target=recovery
