@@ -14,6 +14,12 @@ TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 # Display
 TARGET_SCREEN_DENSITY := 400
 
+# Recovery Graphics Fix
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+$(call soong_config_set_bool,recovery,target_recovery_uses_qti_drm,true)
+TARGET_RECOVERY_DEFAULT_ROTATION := ROTATION_RIGHT
+TARGET_RECOVERY_DEFAULT_TOUCH_ROTATION := ROTATION_RIGHT
+
 # ---------------------------------------------------------
 # Kernel & Boot
 # ---------------------------------------------------------
